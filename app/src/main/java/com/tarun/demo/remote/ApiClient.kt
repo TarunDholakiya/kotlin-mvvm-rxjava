@@ -1,12 +1,18 @@
 package com.tarun.demo.remote
 
+import com.tarun.demo.MyApplication
+import com.tarun.demo.R
 import com.tarun.demo.utils.Constants.BASE_URL
+import com.tarun.demo.utils.NetworkUtils
 import io.reactivex.schedulers.Schedulers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
@@ -29,7 +35,7 @@ object ApiClient {
                     chain.proceed(request)
                 }
                 .addInterceptor(interceptor)
-                .addInterceptor(ConnectivityInterceptor())
+                //.addInterceptor(ConnectivityInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(0, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
@@ -45,4 +51,25 @@ object ApiClient {
         apiServices = retrofit.create(ApiServices::class.java)
         return retrofit
     }
+}
+
+class ConnectivityInterceptor : Interceptor {
+
+    @Throws(IOException::class)
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val isNetworkActive = NetworkUtils.isNetworkConnected()
+        return if (!isNetworkActive) {
+            throw NoConnectivityException(
+                message = String()
+            )
+        } else {
+            chain.proceed(chain.request())
+        }
+    }
+
+    /**
+     * Throws NoConnectivityException if network not available
+     */
+    class NoConnectivityException(override var message: String) :
+        IOException(MyApplication.get().getString(R.string.internet_not_available))
 }
