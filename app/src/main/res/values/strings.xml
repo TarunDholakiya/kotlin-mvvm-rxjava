@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">demo</string>
+    <string name="internet_not_available">No network available, please check your WiFi or Data connection</string>
+</resources>
