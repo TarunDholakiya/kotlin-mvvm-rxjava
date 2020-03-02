@@ -1,7 +1,8 @@
-package com.tarun.demo
+package com.tarun.demo.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.tarun.demo.MyApplication
 
 object NetworkUtils {
     fun isNetworkConnected(): Boolean {
