@@ -1,28 +1,23 @@
 package com.tarun.demo.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.tarun.demo.model.Item
 import com.tarun.demo.remote.RemoteDataSource
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
 import java.util.*
 
-class ItemViewModel : ViewModel() {
+class ItemViewModel : BaseViewModel() {
     val TAG = ItemViewModel::class.java.simpleName
     val items = MutableLiveData<ArrayList<Item>>()
-    val compositeDisposable = CompositeDisposable()
 
     fun getItemList() {
         compositeDisposable.add(
-            RemoteDataSource.getItemList().subscribe(Consumer {
+            RemoteDataSource.getItemList().subscribe({
                 if (it.isSuccessful) {
-                    Log.i("Success full", " :API call")
+                    items.value = it.body()
+                } else {
+                    initializeApiError(it)
                 }
-            }, Consumer {
-                    Log.e("ERROR :: ", "API parsing ")
-            })
+            }, { initializeIOError(it) })
         )
     }
 }
