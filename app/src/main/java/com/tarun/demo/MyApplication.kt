@@ -1,13 +1,11 @@
-package br.com.drivmatics.axyz
+package com.tarun.demo
 
-import androidx.multidex.MultiDexApplication
-import com.benefleet.sdk.axys.features.sensor.AxysSdk
+import android.app.Application
 
-
-class App : MultiDexApplication() {
+class MyApplication : Application() {
 
     companion object {
-        private lateinit var instance: App
+        private lateinit var instance: MyApplication
         @JvmStatic
         fun get() = instance
     }
@@ -15,6 +13,5 @@ class App : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        AxysSdk.create(this)
     }
 }
